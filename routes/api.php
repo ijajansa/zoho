@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,5 +15,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('workspaces', WorkspaceController::class);
     Route::scopeBindings()->group(function () {
         Route::apiResource('workspaces.applications', ApplicationController::class);
+        Route::put('workspaces/{workspace}/applications/{application}/modules/reorder', [ModuleController::class, 'reorder'])
+            ->name('workspaces.applications.modules.reorder');
+        Route::apiResource('workspaces.applications.modules', ModuleController::class);
     });
 });

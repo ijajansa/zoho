@@ -5,9 +5,12 @@ import { AuthProvider } from './auth/AuthContext';
 import { GuestRoute, ProtectedRoute } from './auth/RouteGuards';
 import { ToastProvider } from './components/ToastProvider';
 import AppLayout from './layouts/AppLayout';
+import ApplicationBuilderLayout from './layouts/ApplicationBuilderLayout';
 import AuthLayout from './layouts/AuthLayout';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
+import ModuleDetailPage from './pages/ModuleDetailPage';
+import ModulesPage from './pages/ModulesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RegisterPage from './pages/RegisterPage';
 import ApplicationDetailPage from './pages/ApplicationDetailPage';
@@ -31,7 +34,11 @@ createRoot(document.getElementById('app')).render(
                                 <Route path="/dashboard" element={<DashboardPage />} />
                                 <Route path="/workspaces" element={<WorkspacesPage />} />
                                 <Route path="/workspaces/:id" element={<WorkspaceDetailPage />} />
-                                <Route path="/workspaces/:workspaceId/applications/:applicationId" element={<ApplicationDetailPage />} />
+                                <Route path="/workspaces/:workspaceId/applications/:applicationId" element={<ApplicationBuilderLayout />}>
+                                    <Route index element={<ApplicationDetailPage />} />
+                                    <Route path="modules" element={<ModulesPage />} />
+                                </Route>
+                                <Route path="/workspaces/:workspaceId/applications/:applicationId/modules/:moduleId" element={<ModuleDetailPage />} />
                             </Route>
                         </Route>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

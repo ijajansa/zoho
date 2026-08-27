@@ -1,6 +1,6 @@
 # Formly
 
-Formly is the foundation for a SaaS low-code admin panel builder. It includes Laravel Sanctum authentication, owner-isolated workspace and application management, and a responsive React dashboard and builder shell.
+Formly is the foundation for a SaaS low-code admin panel builder. It includes Laravel Sanctum authentication, owner-isolated workspace, application and module management, and responsive application/module builder shells.
 
 ## Stack
 
@@ -41,8 +41,11 @@ Bearer-token protected endpoints:
 - `GET|PUT|PATCH|DELETE /api/workspaces/{workspace}`
 - `GET|POST /api/workspaces/{workspace}/applications`
 - `GET|PUT|PATCH|DELETE /api/workspaces/{workspace}/applications/{application}`
+- `GET|POST /api/workspaces/{workspace}/applications/{application}/modules`
+- `GET|PUT|PATCH|DELETE /api/workspaces/{workspace}/applications/{application}/modules/{module}`
+- `PUT /api/workspaces/{workspace}/applications/{application}/modules/reorder`
 
-Workspace access is enforced through `WorkspacePolicy`; application routes combine scoped nested binding, explicit parent-child validation, and `ApplicationPolicy` authorization.
+Every level combines scoped nested binding, explicit parent-child validation, and model policies. Module internal table names are backend-generated metadata only; no dynamic physical tables are created in this phase.
 
 ## Verification
 
@@ -51,4 +54,4 @@ php artisan test
 npm run build
 ```
 
-Modules, dynamic tables and fields, form building, workflows, dashboard building, and roles are intentionally reserved for later phases.
+Dynamic tables and fields, form building, record storage, workflows, dashboard building, and roles are intentionally reserved for later phases.
