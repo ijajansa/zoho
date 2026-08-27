@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
@@ -11,4 +12,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('workspaces', WorkspaceController::class);
+    Route::scopeBindings()->group(function () {
+        Route::apiResource('workspaces.applications', ApplicationController::class);
+    });
 });

@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RegisterPage from './pages/RegisterPage';
+import ApplicationDetailPage from './pages/ApplicationDetailPage';
 import WorkspaceDetailPage from './pages/WorkspaceDetailPage';
 import WorkspacesPage from './pages/WorkspacesPage';
 
@@ -30,6 +31,7 @@ createRoot(document.getElementById('app')).render(
                                 <Route path="/dashboard" element={<DashboardPage />} />
                                 <Route path="/workspaces" element={<WorkspacesPage />} />
                                 <Route path="/workspaces/:id" element={<WorkspaceDetailPage />} />
+                                <Route path="/workspaces/:workspaceId/applications/:applicationId" element={<ApplicationDetailPage />} />
                             </Route>
                         </Route>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

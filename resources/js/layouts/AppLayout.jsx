@@ -1,4 +1,4 @@
-import { AppWindow, ChevronDown, Grid2X2, LayoutDashboard, LogOut, Menu, Settings, Users, X } from 'lucide-react';
+import { Blocks, ChevronDown, Grid2X2, LayoutDashboard, LogOut, Menu, Settings, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -40,7 +40,7 @@ export default function AppLayout() {
                     </div>
                     <p className="mb-3 mt-8 px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Coming later</p>
                     <div className="space-y-1">
-                        <DisabledNav icon={AppWindow} label="Applications" />
+                        <DisabledNav icon={Blocks} label="Modules & data" />
                         <DisabledNav icon={Users} label="Team & roles" />
                         <DisabledNav icon={Settings} label="Settings" />
                     </div>
