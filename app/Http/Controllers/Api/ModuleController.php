@@ -21,7 +21,7 @@ class ModuleController extends Controller
     public function index(Workspace $workspace, Application $application): JsonResponse
     {
         $this->authorizeParents($workspace, $application);
-        $modules = $application->modules()->orderBy('sort_order')->orderBy('id')->get();
+        $modules = $application->modules()->withCount('fields')->orderBy('sort_order')->orderBy('id')->get();
 
         return response()->json([
             'success' => true,
@@ -37,7 +37,7 @@ class ModuleController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Module created successfully',
-            'data' => ['module' => new ModuleResource($module)],
+            'data' => ['module' => new ModuleResource($module->loadCount('fields'))],
         ], 201);
     }
 
@@ -48,7 +48,7 @@ class ModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => ['module' => new ModuleResource($module)],
+            'data' => ['module' => new ModuleResource($module->loadCount('fields'))],
         ]);
     }
 
@@ -61,7 +61,7 @@ class ModuleController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Module updated successfully',
-            'data' => ['module' => new ModuleResource($module)],
+            'data' => ['module' => new ModuleResource($module->loadCount('fields'))],
         ]);
     }
 
@@ -81,7 +81,7 @@ class ModuleController extends Controller
     {
         $this->authorizeParents($workspace, $application);
         $this->moduleService->reorder($application, $request->validated('modules'));
-        $modules = $application->modules()->orderBy('sort_order')->orderBy('id')->get();
+        $modules = $application->modules()->withCount('fields')->orderBy('sort_order')->orderBy('id')->get();
 
         return response()->json([
             'success' => true,

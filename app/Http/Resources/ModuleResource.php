@@ -17,6 +17,7 @@ class ModuleResource extends JsonResource
             'icon' => $this->icon,
             'status' => $this->status,
             'sort_order' => $this->sort_order,
+            'fields_count' => $this->whenCounted('fields'),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
