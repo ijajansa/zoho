@@ -1,16 +1,20 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Plus } from 'lucide-react';
+import { GripVertical, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
 import FieldTypeIcon from './FieldTypeIcon';
 
 export default function FieldPalette({ fieldTypes, onAdd }) {
-    const categories = [...new Set(fieldTypes.map((type) => type.category))];
+    const [query, setQuery] = useState('');
+    const filteredTypes = fieldTypes.filter((type) => `${type.label} ${type.type} ${type.category}`.toLowerCase().includes(query.trim().toLowerCase()));
+    const categories = [...new Set(filteredTypes.map((type) => type.category))];
 
     return (
         <aside className="border-b border-slate-200 bg-slate-50/80 p-4 lg:border-b-0 lg:border-r">
-            <div className="mb-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Field types</p><p className="mt-1 text-xs leading-5 text-slate-500">Drag onto the canvas or click to add.</p></div>
+            <div className="mb-4"><p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Field types</p><p className="mt-1 text-xs leading-5 text-slate-500">Drag onto the canvas or click to add.</p><label className="relative mt-3 block"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} className="field py-2 pl-9 text-xs" placeholder="Search fields..." /></label></div>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-                {categories.map((category) => <div key={category}><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">{category}</p><div className="grid grid-cols-2 gap-2 lg:grid-cols-1">{fieldTypes.filter((type) => type.category === category).map((type) => <PaletteItem key={type.type} type={type} onAdd={onAdd} />)}</div></div>)}
+                {categories.map((category) => <div key={category}><p className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">{category}</p><div className="grid grid-cols-2 gap-2 lg:grid-cols-1">{filteredTypes.filter((type) => type.category === category).map((type) => <PaletteItem key={type.type} type={type} onAdd={onAdd} />)}</div></div>)}
+                {filteredTypes.length === 0 && <p className="text-center text-xs text-slate-500">No field types match.</p>}
             </div>
         </aside>
     );

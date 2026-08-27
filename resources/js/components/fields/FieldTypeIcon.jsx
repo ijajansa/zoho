@@ -1,4 +1,4 @@
-import { AlignLeft, Binary, Calendar, CalendarClock, CheckSquare, CircleDot, Clock, DollarSign, Hash, KeyRound, Link, ListFilter, Mail, Percent, Phone, ToggleRight, Type } from 'lucide-react';
+import { AlignLeft, Binary, Calendar, CalendarClock, CheckSquare, CircleDollarSign, CircleDot, Clock, Hash, KeyRound, Link, ListFilter, Mail, Percent, Phone, ToggleRight, Type } from 'lucide-react';
 
 const icons = {
     type: Type,
@@ -16,8 +16,25 @@ const icons = {
     'circle-dot': CircleDot,
     'square-check': CheckSquare,
     'toggle-right': ToggleRight,
-    'dollar-sign': DollarSign,
+    'dollar-sign': CircleDollarSign,
     percent: Percent,
+    'circle-dollar-sign': CircleDollarSign,
+    text: Type,
+    textarea: AlignLeft,
+    number: Hash,
+    decimal: Binary,
+    email: Mail,
+    url: Link,
+    password: KeyRound,
+    date: Calendar,
+    time: Clock,
+    datetime: CalendarClock,
+    select: ListFilter,
+    radio: CircleDot,
+    checkbox: CheckSquare,
+    toggle: ToggleRight,
+    currency: CircleDollarSign,
+    percentage: Percent,
 };
 
 export default function FieldTypeIcon({ name, size = 17, className = '' }) {
