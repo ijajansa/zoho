@@ -3,9 +3,34 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
-@source '../**/*.js';
+@source '../**/*.{js,jsx}';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+    --color-brand-50: #effdf8;
+    --color-brand-100: #d7f9ed;
+    --color-brand-200: #b2f1dc;
+    --color-brand-300: #7de2c5;
+    --color-brand-400: #46cbaa;
+    --color-brand-500: #20ae90;
+    --color-brand-600: #168b75;
+    --color-brand-700: #156f60;
+    --color-brand-800: #15594f;
+    --color-brand-900: #144a42;
+}
+
+@layer base {
+    * { border-color: #e2e8f0; }
+    html { min-width: 320px; background: #f8fafc; }
+    body { min-height: 100vh; color: #0f172a; background: #f8fafc; -webkit-font-smoothing: antialiased; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
+    ::selection { background: #b2f1dc; color: #144a42; }
+}
+
+@layer components {
+    .focus-ring { @apply outline-none ring-brand-500/20 focus:border-brand-500 focus:ring-4; }
+    .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-900/10 disabled:cursor-not-allowed disabled:opacity-60; }
+    .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-200/60 disabled:cursor-not-allowed disabled:opacity-50; }
+    .field { @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20; }
 }
