@@ -18,6 +18,14 @@ import RegisterPage from './pages/RegisterPage';
 import ApplicationDetailPage from './pages/ApplicationDetailPage';
 import WorkspaceDetailPage from './pages/WorkspaceDetailPage';
 import WorkspacesPage from './pages/WorkspacesPage';
+import RuntimeAppLayout from './layouts/RuntimeAppLayout';
+import RuntimeModuleLayout from './layouts/RuntimeModuleLayout';
+import RuntimeDashboardPage from './pages/RuntimeDashboardPage';
+import DynamicRecordListPage from './pages/DynamicRecordListPage';
+import DynamicRecordFormPage from './pages/DynamicRecordFormPage';
+import DynamicRecordDetailPage from './pages/DynamicRecordDetailPage';
+import ListViewBuilderPage from './pages/ListViewBuilderPage';
+import ModuleSettingsPage from './pages/ModuleSettingsPage';
 
 createRoot(document.getElementById('app')).render(
     <React.StrictMode>
@@ -43,6 +51,17 @@ createRoot(document.getElementById('app')).render(
                                 <Route path="/workspaces/:workspaceId/applications/:applicationId/modules/:moduleId" element={<ModuleBuilderLayout />}>
                                     <Route index element={<ModuleDetailPage />} />
                                     <Route path="form" element={<FormBuilderPage />} />
+                                    <Route path="list-view" element={<ListViewBuilderPage />} />
+                                    <Route path="settings" element={<ModuleSettingsPage />} />
+                                </Route>
+                            </Route>
+                            <Route path="/apps/:applicationId" element={<RuntimeAppLayout />}>
+                                <Route index element={<RuntimeDashboardPage />} />
+                                <Route path="modules/:moduleId" element={<RuntimeModuleLayout />}>
+                                    <Route index element={<DynamicRecordListPage />} />
+                                    <Route path="create" element={<DynamicRecordFormPage />} />
+                                    <Route path=":recordId" element={<DynamicRecordDetailPage />} />
+                                    <Route path=":recordId/edit" element={<DynamicRecordFormPage />} />
                                 </Route>
                             </Route>
                         </Route>

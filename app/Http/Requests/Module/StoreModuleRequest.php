@@ -16,6 +16,7 @@ class StoreModuleRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:100'],
+            'singular_name' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:1000'],
             'icon' => ['nullable', 'string', 'max:50'],
             'status' => ['nullable', Rule::in(['active', 'inactive'])],

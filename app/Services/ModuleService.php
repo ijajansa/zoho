@@ -23,6 +23,7 @@ class ModuleService
 
         return $application->modules()->create([
             'name' => $data['name'],
+            'singular_name' => $data['singular_name'] ?? Str::singular($data['name']),
             'slug' => $this->uniqueSlug($application, $data['name']),
             'table_name' => $this->uniqueTableName($application, $data['name']),
             'description' => $data['description'] ?? null,
@@ -37,9 +38,11 @@ class ModuleService
     {
         $module->update([
             'name' => $data['name'],
+            'singular_name' => $data['singular_name'] ?? Str::singular($data['name']),
             'description' => $data['description'] ?? null,
             'icon' => $data['icon'] ?? null,
             'status' => $data['status'] ?? 'active',
+            'display_field_id' => array_key_exists('display_field_id', $data) ? $data['display_field_id'] : $module->display_field_id,
         ]);
 
         return $module->refresh();

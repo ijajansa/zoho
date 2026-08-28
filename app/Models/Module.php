@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Module extends Model
 {
@@ -15,6 +16,7 @@ class Module extends Model
 
     protected $fillable = [
         'name',
+        'singular_name',
         'slug',
         'table_name',
         'description',
@@ -25,6 +27,7 @@ class Module extends Model
         'schema_status',
         'schema_version',
         'schema_published_at',
+        'display_field_id',
     ];
 
     protected function casts(): array
@@ -55,5 +58,15 @@ class Module extends Model
     public function schemaChanges(): HasMany
     {
         return $this->hasMany(ModuleSchemaChange::class);
+    }
+
+    public function displayField(): BelongsTo
+    {
+        return $this->belongsTo(ModuleField::class, 'display_field_id');
+    }
+
+    public function listView(): HasOne
+    {
+        return $this->hasOne(ModuleListView::class);
     }
 }

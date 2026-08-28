@@ -1,6 +1,6 @@
 # Formly
 
-Formly is the foundation for a SaaS low-code admin panel builder. It includes Laravel Sanctum authentication, owner-isolated workspace, application and module management, a metadata-driven drag-and-drop form builder, and controlled physical schema publishing.
+Formly is a SaaS low-code admin panel builder. It includes Laravel Sanctum authentication, owner-isolated workspace, application and module management, a metadata-driven drag-and-drop form builder, controlled physical schema publishing, and a generated admin runtime for managing records.
 
 ## Stack
 
@@ -53,10 +53,17 @@ Bearer-token protected endpoints:
 - `GET /api/workspaces/{workspace}/applications/{application}/modules/{module}/schema`
 - `POST /api/workspaces/{workspace}/applications/{application}/modules/{module}/schema/publish`
 - `GET /api/workspaces/{workspace}/applications/{application}/modules/{module}/schema/history`
+- `GET /api/applications/{application}/runtime`
+- `GET /api/workspaces/{workspace}/applications/{application}/modules/{module}/runtime`
+- `GET|PUT /api/workspaces/{workspace}/applications/{application}/modules/{module}/list-view`
+- `GET|POST /api/workspaces/{workspace}/applications/{application}/modules/{module}/records`
+- `GET|PUT|DELETE /api/workspaces/{workspace}/applications/{application}/modules/{module}/records/{recordId}`
 
 Every level combines scoped nested binding, explicit parent-child validation, and model policies. The bulk form endpoint validates the complete field set and persists creates, updates, deletes, and ordering in one transaction.
 
 Module and field metadata remain the source of truth. Physical tables are created only through the explicit schema publish endpoint; the engine validates identifiers and types, records versioned history, safely synchronizes additions and supported modifications, and never drops archived published columns.
+
+Published active modules appear automatically under `/apps/{application}`. The generic runtime provides real record counts, metadata-generated create/edit/detail forms, configurable list columns, search, approved sorting, dynamic filters, pagination, and deletion without generating PHP files per module. Passwords are hashed and redacted, while hidden, readonly, inactive, and archived field rules are enforced server-side.
 
 ## Verification
 
@@ -65,4 +72,4 @@ php artisan test
 npm run build
 ```
 
-Record storage, relationships, workflows, dashboard building, and roles are intentionally reserved for later phases.
+Relationships, workflows, custom dashboard building, and generated-app roles are intentionally reserved for later phases.

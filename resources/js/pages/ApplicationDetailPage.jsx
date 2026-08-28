@@ -1,29 +1,32 @@
-import { Blocks, Database, Plus, TableProperties, Users } from 'lucide-react';
+import { Blocks, Database, ExternalLink, Plus, TableProperties, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { getModules } from '../api/modules';
+import { getRuntimeApplication } from '../api/runtime';
 import { formatDate } from '../utils/format';
 
 export default function ApplicationDetailPage() {
     const { workspace, application } = useOutletContext();
     const { workspaceId, applicationId } = useParams();
     const [moduleCount, setModuleCount] = useState(null);
+    const [recordCount, setRecordCount] = useState(null);
 
     useEffect(() => {
         getModules(workspaceId, applicationId)
             .then((modules) => setModuleCount(modules.length))
             .catch(() => setModuleCount(0));
+        getRuntimeApplication(applicationId).then((runtime) => setRecordCount(runtime.modules.reduce((total, module) => total + module.record_count, 0))).catch(() => setRecordCount(0));
     }, [workspaceId, applicationId]);
 
     const stats = [
         { icon: Blocks, label: 'Modules', value: moduleCount ?? '—' },
-        { icon: Database, label: 'Records', value: '0' },
+        { icon: Database, label: 'Records', value: recordCount ?? '—' },
         { icon: Users, label: 'Users', value: '1' },
     ];
 
     return (
         <div>
-            <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">Application overview</p><h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Build the structure behind your tool</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">{application.description || 'No description has been added to this application yet.'}</p></div>
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-700">Application overview</p><h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Build the structure behind your tool</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">{application.description || 'No description has been added to this application yet.'}</p></div><Link to={`/apps/${application.id}`} className="btn-primary shrink-0"><ExternalLink size={16} /> Open App</Link></div>
             <div className="mt-7 grid gap-4 sm:grid-cols-3">{stats.map((stat) => <Metric key={stat.label} {...stat} />)}</div>
             <div className="mt-7 grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
                 <section className="grid min-h-64 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-6 py-10 text-center"><div><span className="mx-auto grid size-14 place-items-center rounded-2xl bg-white text-brand-600 shadow-sm ring-1 ring-slate-200"><TableProperties size={24} /></span><h3 className="mt-4 font-bold text-slate-800">{moduleCount ? `${moduleCount} module${moduleCount === 1 ? '' : 's'} ready` : 'Start with your first module'}</h3><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">Modules define business entities such as customers, products, orders, and employees.</p><Link to={`/workspaces/${workspaceId}/applications/${applicationId}/modules`} className="btn-primary mt-5"><Plus size={16} /> {moduleCount ? 'Manage modules' : 'Create module'}</Link></div></section>
