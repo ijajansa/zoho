@@ -11,6 +11,7 @@ import FieldSettingsPanel from '../components/fields/FieldSettingsPanel';
 import FormPreview from '../components/fields/FormPreview';
 import SortableField from '../components/fields/SortableField';
 import Spinner from '../components/Spinner';
+import SchemaPanel from '../components/schema/SchemaPanel';
 import { useToast } from '../components/ToastProvider';
 import { createLocalField, fieldPayload, newClientId, normalizeField, normalizeFieldOrder } from '../fields/fieldState';
 
@@ -49,6 +50,8 @@ export default function FormBuilderPage() {
     const [overId, setOverId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [schemaPublishing, setSchemaPublishing] = useState(false);
+    const [schemaRefreshKey, setSchemaRefreshKey] = useState(0);
     const [dirty, setDirty] = useState(false);
     const [preview, setPreview] = useState(false);
     const [error, setError] = useState('');
@@ -153,6 +156,7 @@ export default function FormBuilderPage() {
             setFields(normalized);
             setSelectedKey((key) => normalized.find((field) => field._key === key)?.id ? key : null);
             setDirty(false);
+            setSchemaRefreshKey((key) => key + 1);
             notify('Form saved successfully.');
         } catch (requestError) {
             notify(errorMessage(requestError, 'Could not save the form. Your unsaved changes are still here.'), 'error');
@@ -163,7 +167,7 @@ export default function FormBuilderPage() {
     if (error) return <div className="grid min-h-[520px] place-items-center p-8 text-center"><div><h2 className="font-bold text-slate-900">Form builder unavailable</h2><p className="mt-2 text-sm text-slate-500">{error}</p></div></div>;
 
     return <div className="min-h-[640px]">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5"><div><h2 className="font-bold text-slate-900">{preview ? 'Form preview' : 'Form builder'}</h2><p className={`text-xs font-medium ${dirty ? 'text-amber-600' : 'text-slate-400'}`}>{dirty ? 'Unsaved changes' : 'Saved'}</p></div><div className="flex gap-2">{preview ? <button type="button" onClick={() => setPreview(false)} className="btn-secondary"><ArrowLeft size={15} /> Back to builder</button> : <button type="button" onClick={() => setPreview(true)} className="btn-secondary"><Eye size={15} /> Preview</button>}<button type="button" onClick={save} disabled={saving || !dirty} className="btn-primary">{saving ? <LoaderCircle size={15} className="animate-spin" /> : <Save size={15} />} {saving ? 'Saving…' : 'Save form'}</button></div></div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5"><div><h2 className="font-bold text-slate-900">{preview ? 'Form preview' : 'Form builder'}</h2><p className={`text-xs font-medium ${dirty ? 'text-amber-600' : 'text-slate-400'}`}>{dirty ? 'Unsaved changes' : 'Saved'}</p></div><div className="flex flex-wrap items-center justify-end gap-2"><SchemaPanel workspaceId={workspaceId} applicationId={applicationId} moduleId={moduleId} compact dirty={dirty} refreshKey={schemaRefreshKey} onPublishingChange={setSchemaPublishing} />{preview ? <button type="button" onClick={() => setPreview(false)} className="btn-secondary"><ArrowLeft size={15} /> Back to builder</button> : <button type="button" onClick={() => setPreview(true)} className="btn-secondary"><Eye size={15} /> Preview</button>}<button type="button" onClick={save} disabled={saving || schemaPublishing || !dirty} className="btn-primary">{saving ? <LoaderCircle size={15} className="animate-spin" /> : <Save size={15} />} {saving ? 'Saving...' : 'Save form'}</button></div></div>
         {preview ? <FormPreview fields={fields} moduleName={module.name} /> : <DndContext sensors={sensors} collisionDetection={builderCollisionDetection} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragCancel={handleDragCancel} onDragEnd={handleDragEnd}><div className="lg:grid lg:grid-cols-[200px_minmax(0,1fr)_280px]"><FieldPalette fieldTypes={fieldTypes} onAdd={addField} /><BuilderCanvas fields={fields} selectedKey={selectedKey} dragOver={overId !== null} onSelect={setSelectedKey} onDuplicate={duplicateField} onDelete={deleteField} /><FieldSettingsPanel field={selected} definition={selected ? definitions[selected.field_type] : null} onChange={updateField} onDuplicate={duplicateField} onDelete={deleteField} onClose={() => setSelectedKey(null)} /></div><DragOverlay dropAnimation={null}>{activeDrag ? <DragPreview activeDrag={activeDrag} /> : null}</DragOverlay></DndContext>}
     </div>;
 }

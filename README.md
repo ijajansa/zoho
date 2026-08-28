@@ -1,6 +1,6 @@
 # Formly
 
-Formly is the foundation for a SaaS low-code admin panel builder. It includes Laravel Sanctum authentication, owner-isolated workspace, application and module management, and a metadata-driven drag-and-drop form builder.
+Formly is the foundation for a SaaS low-code admin panel builder. It includes Laravel Sanctum authentication, owner-isolated workspace, application and module management, a metadata-driven drag-and-drop form builder, and controlled physical schema publishing.
 
 ## Stack
 
@@ -50,10 +50,13 @@ Bearer-token protected endpoints:
 - `GET|PUT|DELETE /api/workspaces/{workspace}/applications/{application}/modules/{module}/fields/{field}`
 - `PUT /api/workspaces/{workspace}/applications/{application}/modules/{module}/fields/reorder`
 - `PUT /api/workspaces/{workspace}/applications/{application}/modules/{module}/form`
+- `GET /api/workspaces/{workspace}/applications/{application}/modules/{module}/schema`
+- `POST /api/workspaces/{workspace}/applications/{application}/modules/{module}/schema/publish`
+- `GET /api/workspaces/{workspace}/applications/{application}/modules/{module}/schema/history`
 
 Every level combines scoped nested binding, explicit parent-child validation, and model policies. The bulk form endpoint validates the complete field set and persists creates, updates, deletes, and ordering in one transaction.
 
-Module table names and fields are metadata only. This phase does not create physical dynamic tables or provide record CRUD.
+Module and field metadata remain the source of truth. Physical tables are created only through the explicit schema publish endpoint; the engine validates identifiers and types, records versioned history, safely synchronizes additions and supported modifications, and never drops archived published columns.
 
 ## Verification
 
@@ -62,4 +65,4 @@ php artisan test
 npm run build
 ```
 
-Dynamic physical tables, record storage, relationships, workflows, dashboard building, and roles are intentionally reserved for later phases.
+Record storage, relationships, workflows, dashboard building, and roles are intentionally reserved for later phases.

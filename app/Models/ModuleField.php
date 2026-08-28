@@ -30,6 +30,11 @@ class ModuleField extends Model
         'sort_order',
         'width',
         'status',
+        'is_published',
+        'published_at',
+        'schema_version',
+        'is_archived',
+        'published_definition',
     ];
 
     protected function casts(): array
@@ -44,6 +49,11 @@ class ModuleField extends Model
             'settings' => 'array',
             'sort_order' => 'integer',
             'width' => 'integer',
+            'is_published' => 'boolean',
+            'published_at' => 'datetime',
+            'schema_version' => 'integer',
+            'is_archived' => 'boolean',
+            'published_definition' => 'array',
         ];
     }
 

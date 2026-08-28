@@ -13,6 +13,8 @@ use App\Models\Workspace;
 use App\Services\ModuleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 
 class ModuleController extends Controller
 {
@@ -69,6 +71,10 @@ class ModuleController extends Controller
     {
         $this->authorizeParents($workspace, $application);
         $this->authorizeModule($application, $module, 'delete');
+        $hasPhysicalSchema = preg_match('/^app_[0-9]+_[a-z0-9_]+$/', $module->table_name) && Schema::hasTable($module->table_name);
+        if ($hasPhysicalSchema || $module->schema_version > 0 || in_array($module->schema_status, ['published', 'out_of_sync', 'syncing', 'error'], true)) {
+            throw ValidationException::withMessages(['module' => 'This module has a published physical schema and cannot be deleted yet.']);
+        }
         $module->delete();
 
         return response()->json([

@@ -18,22 +18,40 @@ class ModuleFieldService
         'application_id', 'module_id', 'owner_id', 'status', 'sort_order',
     ];
 
-    public function __construct(private readonly FieldTypeRegistry $registry) {}
+    public function __construct(
+        private readonly FieldTypeRegistry $registry,
+        private readonly SchemaStateService $schemaState,
+    ) {}
 
     public function create(Module $module, array $data, ?int $sortOrder = null): ModuleField
     {
-        return $module->fields()->create($this->createAttributes(
+        $field = $module->fields()->create($this->createAttributes(
             $module,
             $data,
             $sortOrder ?? (((int) $module->fields()->max('sort_order')) + 1),
         ));
+        $this->schemaState->refresh($module);
+
+        return $field;
     }
 
     public function update(ModuleField $field, array $data, ?int $sortOrder = null): ModuleField
     {
         $field->update($this->updateAttributes($field, $data, $sortOrder));
+        $this->schemaState->refresh($field->module);
 
         return $field->refresh();
+    }
+
+    public function remove(ModuleField $field): void
+    {
+        $module = $field->module;
+        if ($field->is_published) {
+            $field->update(['is_archived' => true, 'status' => 'inactive']);
+        } else {
+            $field->delete();
+        }
+        $this->schemaState->refresh($module);
     }
 
     public function reorder(Module $module, array $fields): array
@@ -109,7 +127,7 @@ class ModuleFieldService
         $name = $base;
         $suffix = 2;
 
-        while ($module->fields()->where('name', $name)->exists()) {
+        while (ModuleField::query()->where('module_id', $module->id)->where('name', $name)->exists()) {
             $ending = '_'.$suffix;
             $name = substr($base, 0, self::MAX_NAME_LENGTH - strlen($ending)).$ending;
             $suffix++;

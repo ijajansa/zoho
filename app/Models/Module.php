@@ -22,6 +22,9 @@ class Module extends Model
         'status',
         'is_system',
         'sort_order',
+        'schema_status',
+        'schema_version',
+        'schema_published_at',
     ];
 
     protected function casts(): array
@@ -29,6 +32,8 @@ class Module extends Model
         return [
             'is_system' => 'boolean',
             'sort_order' => 'integer',
+            'schema_version' => 'integer',
+            'schema_published_at' => 'datetime',
         ];
     }
 
@@ -39,6 +44,16 @@ class Module extends Model
 
     public function fields(): HasMany
     {
+        return $this->hasMany(ModuleField::class)->where('is_archived', false)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function schemaFields(): HasMany
+    {
         return $this->hasMany(ModuleField::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function schemaChanges(): HasMany
+    {
+        return $this->hasMany(ModuleSchemaChange::class);
     }
 }

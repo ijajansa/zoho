@@ -11,6 +11,8 @@ use App\Models\Workspace;
 use App\Services\ApplicationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends Controller
 {
@@ -78,6 +80,10 @@ class ApplicationController extends Controller
         Gate::authorize('view', $workspace);
         $this->ensureApplicationBelongsToWorkspace($workspace, $application);
         Gate::authorize('delete', $application);
+        $hasPhysicalSchema = $application->modules()->get()->contains(fn ($module) => preg_match('/^app_[0-9]+_[a-z0-9_]+$/', $module->table_name) && Schema::hasTable($module->table_name));
+        if ($hasPhysicalSchema || $application->modules()->where(fn ($query) => $query->where('schema_version', '>', 0)->orWhereIn('schema_status', ['published', 'out_of_sync', 'syncing', 'error']))->exists()) {
+            throw ValidationException::withMessages(['application' => 'This application contains published modules and cannot be deleted yet.']);
+        }
         $application->delete();
 
         return response()->json([

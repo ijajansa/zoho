@@ -17,7 +17,7 @@ class SaveModuleFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fields' => ['required', 'array'],
+            'fields' => ['present', 'array'],
             'fields.*.id' => ['nullable', 'integer', 'distinct'],
             'fields.*.client_id' => ['nullable', 'string', 'max:100', 'distinct'],
             'fields.*.label' => ['required', 'string', 'max:100'],

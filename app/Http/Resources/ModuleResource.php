@@ -18,6 +18,9 @@ class ModuleResource extends JsonResource
             'status' => $this->status,
             'sort_order' => $this->sort_order,
             'fields_count' => $this->whenCounted('fields'),
+            'schema_status' => $this->schema_status,
+            'schema_version' => $this->schema_version,
+            'schema_published_at' => $this->schema_published_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

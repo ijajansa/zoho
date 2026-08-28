@@ -10,7 +10,10 @@ use Illuminate\Validation\ValidationException;
 
 class FormBuilderService
 {
-    public function __construct(private readonly ModuleFieldService $fieldService) {}
+    public function __construct(
+        private readonly ModuleFieldService $fieldService,
+        private readonly SchemaStateService $schemaState,
+    ) {}
 
     public function save(Module $module, array $submittedFields): Collection
     {
@@ -24,10 +27,15 @@ class FormBuilderService
                 ]);
             }
 
-            if ($submittedIds->isEmpty()) {
-                $module->fields()->delete();
-            } else {
-                $module->fields()->whereNotIn('id', $submittedIds)->delete();
+            $removedFields = $submittedIds->isEmpty()
+                ? $module->fields()->get()
+                : $module->fields()->whereNotIn('id', $submittedIds)->get();
+            foreach ($removedFields as $removedField) {
+                if ($removedField->is_published) {
+                    $removedField->update(['is_archived' => true, 'status' => 'inactive']);
+                } else {
+                    $removedField->delete();
+                }
             }
 
             foreach ($submittedFields as $index => $payload) {
@@ -45,6 +53,8 @@ class FormBuilderService
                     $this->fieldService->create($module, $payload, $sortOrder);
                 }
             }
+
+            $this->schemaState->refresh($module->refresh());
 
             return $module->fields()->orderBy('sort_order')->orderBy('id')->get();
         });

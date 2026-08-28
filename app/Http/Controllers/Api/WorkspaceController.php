@@ -11,12 +11,12 @@ use App\Services\WorkspaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 
 class WorkspaceController extends Controller
 {
-    public function __construct(private readonly WorkspaceService $workspaceService)
-    {
-    }
+    public function __construct(private readonly WorkspaceService $workspaceService) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -70,6 +70,10 @@ class WorkspaceController extends Controller
     public function destroy(Workspace $workspace): JsonResponse
     {
         Gate::authorize('delete', $workspace);
+        $hasPhysicalSchema = $workspace->applications()->with('modules')->get()->pluck('modules')->flatten()->contains(fn ($module) => preg_match('/^app_[0-9]+_[a-z0-9_]+$/', $module->table_name) && Schema::hasTable($module->table_name));
+        if ($hasPhysicalSchema || $workspace->applications()->whereHas('modules', fn ($query) => $query->where(fn ($schemaQuery) => $schemaQuery->where('schema_version', '>', 0)->orWhereIn('schema_status', ['published', 'out_of_sync', 'syncing', 'error'])))->exists()) {
+            throw ValidationException::withMessages(['workspace' => 'This workspace contains published modules and cannot be deleted yet.']);
+        }
         $workspace->delete();
 
         return response()->json([

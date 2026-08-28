@@ -74,7 +74,7 @@ class ModuleFieldController extends Controller
     {
         $this->authorizeParents($workspace, $application, $module);
         $this->authorizeField($module, $field, 'delete');
-        $field->delete();
+        $this->fieldService->remove($field);
 
         return response()->json([
             'success' => true,
@@ -118,6 +118,7 @@ class ModuleFieldController extends Controller
     private function authorizeField(Module $module, ModuleField $field, string $ability): void
     {
         abort_unless($field->module_id === $module->id, 404);
+        abort_if($field->is_archived, 404);
         Gate::authorize($ability, $field);
     }
 }

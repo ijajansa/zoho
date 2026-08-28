@@ -27,6 +27,7 @@ class ModuleFieldResource extends JsonResource
             'sort_order' => $this->sort_order,
             'width' => $this->width,
             'status' => $this->status,
+            'is_published' => $this->is_published,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

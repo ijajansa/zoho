@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FieldTypeController;
 use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\ModuleFieldController;
+use App\Http\Controllers\Api\ModuleSchemaController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('workspaces/{workspace}/applications/{application}/modules/reorder', [ModuleController::class, 'reorder'])
             ->name('workspaces.applications.modules.reorder');
         Route::apiResource('workspaces.applications.modules', ModuleController::class);
+        Route::get('workspaces/{workspace}/applications/{application}/modules/{module}/schema', [ModuleSchemaController::class, 'show'])
+            ->name('workspaces.applications.modules.schema.show');
+        Route::post('workspaces/{workspace}/applications/{application}/modules/{module}/schema/publish', [ModuleSchemaController::class, 'publish'])
+            ->name('workspaces.applications.modules.schema.publish');
+        Route::get('workspaces/{workspace}/applications/{application}/modules/{module}/schema/history', [ModuleSchemaController::class, 'history'])
+            ->name('workspaces.applications.modules.schema.history');
         Route::put('workspaces/{workspace}/applications/{application}/modules/{module}/fields/reorder', [ModuleFieldController::class, 'reorder'])
             ->name('workspaces.applications.modules.fields.reorder');
         Route::put('workspaces/{workspace}/applications/{application}/modules/{module}/form', [ModuleFieldController::class, 'saveForm'])
