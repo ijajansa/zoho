@@ -1,7 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import FieldTypeIcon from './FieldTypeIcon';
 
 export default function FieldPalette({ fieldTypes, onAdd }) {
@@ -21,8 +20,23 @@ export default function FieldPalette({ fieldTypes, onAdd }) {
 }
 
 function PaletteItem({ type, onAdd }) {
-    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: `palette:${type.type}`, data: { source: 'palette', fieldType: type } });
-    const style = { transform: CSS.Translate.toString(transform) };
+    const draggedRef = useRef(false);
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: `palette:${type.type}`, data: { source: 'palette', fieldType: type } });
 
-    return <button ref={setNodeRef} style={style} type="button" onClick={() => onAdd(type)} {...listeners} {...attributes} className={`group flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-left text-xs font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:text-brand-700 ${isDragging ? 'z-50 opacity-50 shadow-lg' : ''}`}><span className="grid size-7 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-700"><FieldTypeIcon name={type.icon} size={15} /></span><span className="min-w-0 flex-1 truncate">{type.label}</span><GripVertical size={13} className="hidden text-slate-300 lg:block" /><Plus size={13} className="text-slate-300 lg:hidden" /></button>;
+    useEffect(() => {
+        if (isDragging) {
+            draggedRef.current = true;
+            return undefined;
+        }
+
+        const timeout = window.setTimeout(() => { draggedRef.current = false; }, 0);
+        return () => window.clearTimeout(timeout);
+    }, [isDragging]);
+
+    const handleClick = () => {
+        if (draggedRef.current) return;
+        onAdd(type);
+    };
+
+    return <button ref={setNodeRef} type="button" data-field-type={type.type} onClick={handleClick} {...listeners} {...attributes} className={`group flex touch-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-left text-xs font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:text-brand-700 ${isDragging ? 'opacity-35' : ''}`}><span className="grid size-7 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-700"><FieldTypeIcon name={type.icon} size={15} /></span><span className="min-w-0 flex-1 truncate">{type.label}</span><GripVertical size={13} className="hidden text-slate-300 lg:block" /><Plus size={13} className="text-slate-300 lg:hidden" /></button>;
 }

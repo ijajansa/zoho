@@ -1,10 +1,16 @@
 export const newClientId = () => `temp_${crypto.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2)}`}`;
 
+export function normalizeFieldOrder(fields) {
+    return fields.map((field, index) => ({ ...field, sort_order: index + 1 }));
+}
+
 export function normalizeField(field) {
+    const clientId = field.client_id || (!field.id ? newClientId() : undefined);
+
     return {
         ...field,
-        client_id: field.client_id || (!field.id ? newClientId() : undefined),
-        _key: field._key || (field.id ? `field_${field.id}` : newClientId()),
+        client_id: clientId,
+        _key: field._key || (field.id ? `field:${field.id}` : `temp:${clientId}`),
         placeholder: field.placeholder || '',
         help_text: field.help_text || '',
         default_value: field.default_value ?? '',
@@ -25,7 +31,7 @@ export function createLocalField(type) {
     const choiceOptions = type.supports_options ? [{ label: 'Active', value: 'active' }, { label: 'Inactive', value: 'inactive' }] : [];
     return normalizeField({
         client_id: clientId,
-        _key: clientId,
+        _key: `temp:${clientId}`,
         label: `${type.label} Field`,
         field_type: type.type,
         placeholder: type.supports_placeholder ? `Enter ${type.label.toLowerCase()}` : '',
